@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+      
+<div class="w3-col l8 s12">
+  <!-- Blog entry -->
+  <div class="w3-card-4 w3-margin w3-white">
+    <div class="w3-container">
+      <h3><b>{{ post.title }}</b></h3>
+    </div>
+
+    <div class="w3-container">
+      <p>{{ post.content }}</p>
+      {% if object.author == user %}
+          {% if object.start_date != None %}
+            <a class="w3-bar-item w3-button w3-hide-small w3-right w3-hover" href="{% url 'post-update' object.post_id.id %}">Confirm</a>
+          {% endif %}
+      {% endif %}
+      
+    </div>
+    <form method='Post'>
+    {% csrf_token %}
+      <div class="w3-container">  
+      {{ form|crispy }}
+      </div>
+
+      <div class="w3-container">
+        <div class="w3-row">
+          <div class="w3-col m8 s12">
+            {% if object.post_id.id %}
+                {% if object.start_date == None %}
+                  <p><button class="w3-button w3-padding-large w3-white w3-border" type='submit'><b>Start Time »</b></button></p>
+                {% else %}
+                  <p><button class="w3-button w3-padding-large w3-white w3-border" type='submit'><b>End Time »</b></button></p>
+                {% endif %}
+            {% else %}
+                <p><button class="w3-button w3-padding-large w3-white w3-border" type='submit'><b>Assiged Issue »</b></button></p>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+  <hr>
+
+<!-- END BLOG ENTRIES -->
+</div>
+{% endblock content %}

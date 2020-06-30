@@ -1,0 +1,101 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% for agent in agents %}
+
+<div class="w3-col l8 s12">
+  <!-- Blog entry -->
+  <div class="w3-card-4 w3-margin w3-white">
+    <div class="w3-container">
+      <span class="w3-padding-large w3-right">
+            Assigned by <p style= "text-transform:capitalize;" align='center'>            
+            {{ agent.author }}</p>
+          </span>
+      <h3><b>{{ agent.post_id }}</b></h3>
+      Issue assigned to <p style= "text-transform:capitalize;">{{ agent.assigned_to }}</p>
+          
+        {% load l10n %}
+        <span class="w3-opacity">Start time: {{ agent.start_date|localize }}</span>  <br />      
+        <span class="w3-opacity">End time: {{ agent.date_commit|localize }}</span>        
+      
+    </div>
+
+    <div class="w3-container">
+      <!-- <p>{{ post.content }}</p> -->
+      {% if object.author == user %}
+
+          <a class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red" href="{% url 'post-delete' object.id %}">Delete</a>          
+          <a class="w3-bar-item w3-button w3-hide-small w3-right w3-hover" href="{% url 'post-update' object.id %}">Update</a>
+
+      {% endif %}
+
+      {% if object.assigned_to == user %}
+       
+          <a class="w3-bar-item w3-button w3-hide-small w3-right w3-hover" href="{% url 'post-update' post.id %}">Confirm</a>
+
+      {% endif %}
+      
+      <div class="w3-row">
+        <div class="w3-col m8 s12">
+             {% if agent.assigned_to.username == user.username %}
+              <p>
+                {% if agent.start_date == None %}
+                  <button class="w3-button w3-padding-large w3-white w3-border">
+                  <a class="w3-bar-item w3-button w3-hide-small w3-right w3-hover" href="{% url 'agent-update-time' agent.id %}"><b>Start Time</b></a></button>
+                {% else %}
+                  <button class="w3-button w3-padding-large w3-white w3-border">
+                  <a class="w3-bar-item w3-button w3-hide-small w3-right w3-hover" href="{% url 'agent-update-time' agent.id %}"><b>End Time</b></a></button>
+                {% endif %}
+              </p>
+            {% else %}
+              <p></p>
+            {% endif %}
+        </div>
+        <div class="w3-col m4 w3-hide-small">
+
+            <p style = "text-transform:capitalize;">
+            <span class="w3-padding-large w3-right">
+                {% if agent.date_commit %}
+                   <b>Solved</b>
+                {% endif %}
+                <!-- <b>{{ agent.post_id.issue }}</b> -->
+                 <span class="w3-tag"></span>
+                
+                <p><span class="w3-padding-large w3-right"><b>Comments</b> <span class="w3-tag">0</span> </span></p>
+            </span>
+            </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+<!-- END BLOG ENTRIES -->
+</div>
+{% endfor %}
+
+ {% if is_paginated %}
+    {% if page_obj.has_previous %}
+      <button class="w3-button w3-white w3-padding-large w3-margin-bottom"><a class='btn btn-outline-info mb-4' href='?page=1'>First</a></button>
+
+      <button class="w3-button w3-black w3-padding-large w3-margin-bottom"><a class='btn btn-outline-info mb-4' href='?page={{ page_obj.previous_page_number }}'>Previous »</a></button>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <button class="w3-button w3-black w3-white w3-padding-large w3-margin-bottom"><a class='btn btn-outline-info mb-4' href='?page=1'><a class="btn btn-info mb-4" href='?page={{ num }}'>{{ num }}</a></button>
+      {% elif num > page_obj.number|add:'-3' and num > page_obj.number|add:'3' %}
+        <button class="w3-button w3-black w3-padding-large w3-margin-bottom"><a class="btn btn-outline-info mb-4" href='?page={{ num }}'>{{ num }}</a></button>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <button class="w3-button w3-white w3-padding-large w3-margin-bottom"><a class='btn btn-outline-info mb-4' href='?page=1'><a class="btn btn-outline-info mb-4" href='?page={{ page_obj.next_page_number }}'>Next</a></button>
+        <button class="w3-button w3-black w3-padding-large w3-margin-bottom"><a class="btn btn-outline-info mb-4" href='?page={{ page_obj.paginator.num_pages }}'>Last</a></button>
+    {% endif %}
+
+  {% endif %}
+  
+{% endblock content %}
